@@ -1,6 +1,6 @@
-from app.display import Display
+from app.display import DisplayConsole, DisplayReverse
 from app.print import PrintConsole, PrintReverse
-from app.serialize import Serialize
+from app.serialize import SerializeJSON, SerializeXML
 
 
 class Book:
@@ -12,7 +12,13 @@ class Book:
 def main(book: Book, commands: list[tuple[str, str]]) -> None | str:
     for cmd, method_type in commands:
         if cmd == "display":
-            Display.display_type(book, method_type)
+            if method_type == "console":
+                display = DisplayConsole()
+            elif method_type == "reverse":
+                display = DisplayReverse()
+            else:
+                raise ValueError(f"Unknown display type: {method_type}")
+            return display.display_type(book)
         elif cmd == "print":
             if method_type == "console":
                 printer = PrintConsole()
@@ -23,7 +29,13 @@ def main(book: Book, commands: list[tuple[str, str]]) -> None | str:
             else:
                 raise ValueError(f"Unknown print type: {method_type}")
         elif cmd == "serialize":
-            return Serialize.serialize(book, method_type)
+            if method_type.lower() == "json":
+                serializer = SerializeJSON()
+            elif method_type.lower() == "xml":
+                serializer = SerializeXML()
+            else:
+                raise ValueError(f"Unknown serialize type: {method_type}")
+            return serializer.serialize(book)
 
 
 if __name__ == "__main__":
